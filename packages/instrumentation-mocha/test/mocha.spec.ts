@@ -28,6 +28,8 @@ describe('mocha', () => {
             expect(testSpan.attributes[TestAttributes.TEST_NAME]).toMatch('successful test');
             expect(testSpan.attributes[TestAttributes.TEST_FULL_NAME]).toMatch('successful test');
             expect(testSpan.attributes[TestAttributes.TEST_SUITES]).toStrictEqual(['mocha', 'empty test']);
+            expect(testSpan.attributes[TestAttributes.TEST_TIMEDOUT]).toBe(false);
+            expect(testSpan.attributes[TestAttributes.TEST_RETRIES]).toBeUndefined();
 
             // status
             expect(testSpan.status.code).toBe(SpanStatusCode.UNSET);
@@ -35,6 +37,39 @@ describe('mocha', () => {
 
             // kind
             expect(testSpan.kind).toBe(SpanKind.CLIENT);
+        });
+    });
+
+    describe('retried test', function() {
+
+        this.retries(2);
+        let retryCount = 0;
+
+        before(() => {
+            memoryExporter.reset();
+        });
+
+        it('retry test', () => {
+
+            // fail just the first retry so it won't fail the entire run
+            if(retryCount === 0) {
+                retryCount++;
+                expect(1).toBe(2);
+            }
+        });
+
+        it('validate retry test', () => {
+            if(retryCount !== 1) {
+                return;
+            }
+            expect(memoryExporter.getFinishedSpans().length).toBe(2);
+            const [firstRun, retry] = memoryExporter.getFinishedSpans();
+
+            expect(firstRun.attributes[TestAttributes.TEST_RETRIES]).toBe(2);
+            expect(firstRun.attributes[TestAttributes.TEST_CURRENT_RETRY]).toBe(0);
+
+            expect(retry.attributes[TestAttributes.TEST_RETRIES]).toBe(2);
+            expect(retry.attributes[TestAttributes.TEST_CURRENT_RETRY]).toBe(1);
         });
     });
 

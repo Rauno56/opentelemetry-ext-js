@@ -19,12 +19,25 @@ export const mochaHooks = {
     beforeEach(done) {
         const tracer = trace.getTracer('opentelemetry-instrumentation-mocha', VERSION);
         const test = this.currentTest as Runnable;
+
+        const attributes = {
+            [TestAttributes.TEST_NAME]: test.title,
+            [TestAttributes.TEST_FULL_NAME]: test.fullTitle(),
+            [TestAttributes.TEST_SUITES]: getSuitesRecursive(test.parent),
+        };
+
+        const retries = (test as any).retries();
+        if(retries >= 0) {
+            attributes[TestAttributes.TEST_RETRIES] = retries;
+
+            const currentRetry = (test as any).currentRetry();
+            if(currentRetry != null) {
+                attributes[TestAttributes.TEST_CURRENT_RETRY] = currentRetry;
+            }
+        }
+
         const spanForTest = tracer.startSpan(test.fullTitle(), {
-            attributes: {
-                [TestAttributes.TEST_NAME]: test.title,
-                [TestAttributes.TEST_FULL_NAME]: test.fullTitle(),
-                [TestAttributes.TEST_SUITES]: getSuitesRecursive(test.parent),
-            },
+            attributes,
             root: true,
             kind: SpanKind.CLIENT,
         });
@@ -50,6 +63,7 @@ export const mochaHooks = {
                 message: (test as any).err?.message,
             });
         }
+        spanForTest.setAttribute(TestAttributes.TEST_TIMEDOUT, test.timedOut);
         spanForTest.end();
         done();
     }
