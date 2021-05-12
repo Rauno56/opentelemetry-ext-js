@@ -1,5 +1,6 @@
-import { trace, context, setSpan, Span, SpanStatusCode }  from '@opentelemetry/api';
+import { trace, context, setSpan, Span, SpanStatusCode, SpanKind }  from '@opentelemetry/api';
 import type { Runnable, Suite } from 'mocha';
+import { TestAttributes } from './types';
 import { VERSION } from './version';
 
 const TEST_SPAN_KEY = Symbol('opentelemetry.mocha.span_key');
@@ -10,7 +11,7 @@ const getSuitesRecursive = (suite: Suite): string[] => {
     }
 
     const parentSuites = getSuitesRecursive(suite.parent);
-    return suite.title ? [suite.title, ...parentSuites] : parentSuites;
+    return suite.title ? [...parentSuites, suite.title] : parentSuites;
 }
 
 export const mochaHooks = {
@@ -20,11 +21,12 @@ export const mochaHooks = {
         const test = this.currentTest as Runnable;
         const spanForTest = tracer.startSpan(test.fullTitle(), {
             attributes: {
-                'test.name': test.title,
-                'test.full_name': test.fullTitle(),
-                'test.suites': getSuitesRecursive(test.parent),
+                [TestAttributes.TEST_NAME]: test.title,
+                [TestAttributes.TEST_FULL_NAME]: test.fullTitle(),
+                [TestAttributes.TEST_SUITES]: getSuitesRecursive(test.parent),
             },
             root: true,
+            kind: SpanKind.CLIENT,
         });
         Object.defineProperty(test, TEST_SPAN_KEY, {
             value: spanForTest,
