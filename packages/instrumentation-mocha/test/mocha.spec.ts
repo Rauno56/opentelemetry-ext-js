@@ -28,7 +28,7 @@ describe('mocha', () => {
             expect(testSpan.attributes[TestAttributes.TEST_NAME]).toMatch('successful test');
             expect(testSpan.attributes[TestAttributes.TEST_FULL_NAME]).toMatch('successful test');
             expect(testSpan.attributes[TestAttributes.TEST_SUITES]).toStrictEqual(['mocha', 'empty test']);
-            expect(testSpan.attributes[TestAttributes.TEST_TIMEDOUT]).toBe(false);
+            expect(testSpan.attributes[TestAttributes.TEST_RESULT_TIMEDOUT]).toBe(false);
             expect(testSpan.attributes[TestAttributes.TEST_RETRIES]).toBeUndefined();
 
             // status
@@ -54,7 +54,7 @@ describe('mocha', () => {
             // fail just the first retry so it won't fail the entire run
             if(retryCount === 0) {
                 retryCount++;
-                expect(1).toBe(2);
+                expect(true).toBeFalsy();
             }
         });
 
@@ -67,9 +67,13 @@ describe('mocha', () => {
 
             expect(firstRun.attributes[TestAttributes.TEST_RETRIES]).toBe(2);
             expect(firstRun.attributes[TestAttributes.TEST_CURRENT_RETRY]).toBe(0);
+            expect(firstRun.status.code).toBe(SpanStatusCode.ERROR);
+            expect(firstRun.status.message).not.toBeUndefined();
 
             expect(retry.attributes[TestAttributes.TEST_RETRIES]).toBe(2);
             expect(retry.attributes[TestAttributes.TEST_CURRENT_RETRY]).toBe(1);
+            expect(retry.status.code).toBe(SpanStatusCode.UNSET);
+            expect(retry.status.message).toBeUndefined();
         });
     });
 
