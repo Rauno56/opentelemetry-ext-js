@@ -15,7 +15,7 @@ jobs:
         run: yarn prettier:check
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     services:
       mongo:
         image: mongo
@@ -36,8 +36,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch all history for all tags and branches
-        run: git fetch
+      # - name: Fetch all history for all tags and branches
+      #   run: git fetch
 
       - name: Install Dependencies
         run: yarn
