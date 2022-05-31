@@ -39,6 +39,13 @@ jobs:
       # - name: Fetch all history for all tags and branches
       #   run: git fetch
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install yarn
+        run: npm i yarn -g
+
       - name: Install Dependencies
         run: yarn
 
