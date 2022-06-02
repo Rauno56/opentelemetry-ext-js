@@ -15,7 +15,7 @@ jobs:
         run: yarn prettier:check
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     services:
       mongo:
         image: mongo
@@ -30,22 +30,21 @@ jobs:
         env:
           NEO4J_AUTH: neo4j/test
 
-      rabbitmq:
-        image: rabbitmq:3
-        ports:
-          - 22221:5672
-        env:
-          RABBITMQ_DEFAULT_USER: username
-          RABBITMQ_DEFAULT_PASS: password
-
     steps:
 
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Fetch all history for all tags and branches
-        run: git fetch
+      # - name: Fetch all history for all tags and branches
+      #   run: git fetch
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install yarn
+        run: npm i yarn -g
 
       - name: Install Dependencies
         run: yarn

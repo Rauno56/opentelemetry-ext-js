@@ -41,6 +41,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/socket.js',
             ['>=3'],
             (moduleExports, moduleVersion) => {
+                console.log('moduleversion', moduleVersion);
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -70,6 +71,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/broadcast-operator.js',
             ['>=4'],
             (moduleExports, moduleVersion) => {
+                console.log('moduleversion', moduleVersion);
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -93,6 +95,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/namespace.js',
             ['<4'],
             (moduleExports, moduleVersion) => {
+                console.log('moduleversion', moduleVersion);
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -113,6 +116,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/lib/socket.js',
             ['2'],
             (moduleExports, moduleVersion) => {
+                console.log('moduleversion', moduleVersion);
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -141,6 +145,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/lib/namespace.js',
             ['2'],
             (moduleExports, moduleVersion) => {
+                console.log('moduleversion', moduleVersion);
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -163,6 +168,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                 'socket.io',
                 ['>=3'],
                 (moduleExports, moduleVersion) => {
+                    console.log('moduleversion', moduleVersion);
                     if (moduleExports === undefined || moduleExports === null) {
                         return moduleExports;
                     }
@@ -174,6 +180,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                     return moduleExports;
                 },
                 (moduleExports, moduleVersion) => {
+                    console.log('moduleversion', moduleVersion);
                     if (isWrapped(moduleExports?.Server?.prototype?.on)) {
                         this._unwrap(moduleExports.Server.prototype, 'on');
                     }
@@ -185,6 +192,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                 'socket.io',
                 ['2'],
                 (moduleExports, moduleVersion) => {
+                    console.log('moduleversion', moduleVersion);
                     if (moduleExports === undefined || moduleExports === null) {
                         return moduleExports;
                     }
@@ -196,6 +204,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                     return moduleExports;
                 },
                 (moduleExports, moduleVersion) => {
+                    console.log('moduleversion', moduleVersion);
                     if (isWrapped(moduleExports?.prototype?.on)) {
                         this._unwrap(moduleExports.prototype, 'on');
                     }
