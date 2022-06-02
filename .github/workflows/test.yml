@@ -48,7 +48,7 @@ jobs:
         run: git fetch
 
       - name: Install Dependencies
-        run: yarn
+        run: npm i --no-workspaces --no-scripts
 
       - name: Build
         run: yarn build:ci

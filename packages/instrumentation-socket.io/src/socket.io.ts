@@ -1,3 +1,4 @@
+import { format } from 'util';
 import { context, trace, Span, SpanKind, SpanStatusCode, diag } from '@opentelemetry/api';
 import {
     InstrumentationBase,
@@ -17,6 +18,14 @@ import { VERSION } from './version';
 import isPromise from 'is-promise';
 
 const reservedEvents = ['connect', 'connect_error', 'disconnect', 'disconnecting', 'newListener', 'removeListener'];
+const seenLogs = new Set();
+const logOnce = (...args) => {
+    const str = format(...args);
+    if (!seenLogs.has(str)) {
+        console.log(str);
+        seenLogs.add(str);
+    }
+};
 
 export class SocketIoInstrumentation extends InstrumentationBase<Io> {
     protected override _config!: SocketIoInstrumentationConfig;
@@ -41,6 +50,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/socket.js',
             ['>=3'],
             (moduleExports, moduleVersion) => {
+                logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -70,6 +80,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/broadcast-operator.js',
             ['>=4'],
             (moduleExports, moduleVersion) => {
+                logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -93,6 +104,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/dist/namespace.js',
             ['<4'],
             (moduleExports, moduleVersion) => {
+                logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -113,6 +125,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/lib/socket.js',
             ['2'],
             (moduleExports, moduleVersion) => {
+                logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -141,6 +154,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
             'socket.io/lib/namespace.js',
             ['2'],
             (moduleExports, moduleVersion) => {
+                logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                 if (moduleExports === undefined || moduleExports === null) {
                     return moduleExports;
                 }
@@ -163,6 +177,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                 'socket.io',
                 ['>=3'],
                 (moduleExports, moduleVersion) => {
+                    logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                     if (moduleExports === undefined || moduleExports === null) {
                         return moduleExports;
                     }
@@ -174,6 +189,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                     return moduleExports;
                 },
                 (moduleExports, moduleVersion) => {
+                    logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                     if (isWrapped(moduleExports?.Server?.prototype?.on)) {
                         this._unwrap(moduleExports.Server.prototype, 'on');
                     }
@@ -185,6 +201,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                 'socket.io',
                 ['2'],
                 (moduleExports, moduleVersion) => {
+                    logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                     if (moduleExports === undefined || moduleExports === null) {
                         return moduleExports;
                     }
@@ -196,6 +213,7 @@ export class SocketIoInstrumentation extends InstrumentationBase<Io> {
                     return moduleExports;
                 },
                 (moduleExports, moduleVersion) => {
+                    logOnce('#######\n## moduleversion:', moduleVersion, '\n#######');
                     if (isWrapped(moduleExports?.prototype?.on)) {
                         this._unwrap(moduleExports.prototype, 'on');
                     }
